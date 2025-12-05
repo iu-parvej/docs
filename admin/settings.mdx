@@ -1,0 +1,159 @@
+---
+title: "Settings"
+description: "Configure fonts, menu, and site-wide settings"
+---
+
+# Admin Settings
+
+Configure global settings for your portfolio.
+
+## Font Management
+
+**URL:** `/admin/settings/fonts`
+
+Manage fonts used throughout your site.
+
+### Upload Custom Font
+
+1. Enter font name
+2. Select `.ttf`, `.otf`, or `.woff` file (max 5MB)
+3. Click **Upload Font**
+
+### Available Fonts
+
+- **Custom Fonts**: Uploaded fonts (purple badge)
+- **Google Fonts**: 70+ curated fonts
+- **Bangla Fonts**: 6 fonts with Bangla support (green badge)
+
+### Using Fonts
+
+Fonts appear in font selectors throughout the admin:
+- Header section (name, roles, description)
+- About section (vertical name)
+- Rich text editor
+
+See [Font Management](/features/font-management) for details.
+
+## Menu Settings
+
+**URL:** `/admin/settings/menu`
+
+Configure the navigation menu.
+
+### Toggle Sections
+
+| Setting | Effect |
+|---------|--------|
+| Show Blog | Display/hide blog in navigation |
+| Show Projects | Display/hide projects in navigation |
+| Show Shop | Display/hide shop in navigation |
+| Show Contact | Display/hide contact section |
+
+### Custom Menu Items
+
+Add custom links to the navigation:
+
+1. Click **Add Menu Item**
+2. Enter label and URL
+3. Set order
+4. Save
+
+### Logo
+
+Upload your site logo:
+- Recommended size: 200×50px
+- Formats: PNG, SVG (transparent background preferred)
+
+## Social Links
+
+**URL:** `/admin/settings/social`
+
+Manage social media links displayed in footer/header.
+
+### Add Social Link
+
+1. Click **Add Link**
+2. Select platform (GitHub, LinkedIn, Twitter, etc.)
+3. Enter profile URL
+4. Save
+
+### Supported Platforms
+
+| Platform | Icon |
+|----------|------|
+| GitHub | GitHub icon |
+| LinkedIn | LinkedIn icon |
+| Twitter/X | X icon |
+| Instagram | Instagram icon |
+| Facebook | Facebook icon |
+| YouTube | YouTube icon |
+| Email | Mail icon |
+| Website | Globe icon |
+
+### Custom Links
+
+For platforms not listed:
+1. Select "Custom"
+2. Enter label
+3. Enter URL
+4. Choose icon (optional)
+
+## Newsletter Settings
+
+**URL:** `/admin/settings/newsletter`
+
+Configure newsletter subscription.
+
+### Options
+
+| Setting | Description |
+|---------|-------------|
+| Enable | Show/hide newsletter form |
+| Provider | Email service (Mailchimp, etc.) |
+| API Key | Provider API key |
+| List ID | Subscriber list ID |
+
+## PayPal Settings
+
+For shop functionality, configure PayPal in your `.env`:
+
+```env
+VITE_PAYPAL_CLIENT_ID=your_client_id
+VITE_PAYPAL_MODE=sandbox  # or 'live'
+```
+
+Get credentials from [PayPal Developer](https://developer.paypal.com).
+
+## Environment Variables
+
+All sensitive settings should be in `.env`:
+
+```env
+# Appwrite
+VITE_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+VITE_APPWRITE_PROJECT_ID=your_project_id
+VITE_APPWRITE_DATABASE_ID=portfolio_db
+VITE_APPWRITE_STORAGE_ID=reactbucket
+
+# PayPal (optional)
+VITE_PAYPAL_CLIENT_ID=your_paypal_client_id
+
+# Email (optional)
+VITE_SMTP_HOST=smtp.example.com
+VITE_SMTP_USER=your_email
+VITE_SMTP_PASS=your_password
+```
+
+<Warning>
+  Never commit `.env` to version control. Add it to `.gitignore`.
+</Warning>
+
+## Backup Recommendations
+
+<Tip>
+  Regularly export your Appwrite data as backup. Go to Appwrite Console → Database → Export.
+</Tip>
+
+<Tip>
+  Keep a copy of your custom fonts locally in case you need to re-upload.
+</Tip>

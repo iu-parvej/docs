@@ -1,0 +1,114 @@
+---
+title: "Project Gallery"
+description: "Showcase your portfolio projects with custom URLs and galleries"
+---
+
+# Project Gallery
+
+Display your portfolio projects with rich details and custom URLs.
+
+## Features
+
+- Custom URL slugs for SEO-friendly links
+- Image galleries with lightbox
+- Category filtering
+- Featured projects for homepage
+- Rich text descriptions
+- Project details (client, date, tools, etc.)
+- External project links
+
+## Admin URLs
+
+| Page | URL |
+|------|-----|
+| Project Management | `/admin/projects` |
+| Categories | `/admin/project-categories` |
+
+## Creating a Project
+
+<Steps>
+  <Step title="Create Category">
+    Go to `/admin/project-categories` and add categories (e.g., "Web Development", "GIS", "Design").
+  </Step>
+  <Step title="Add New Project">
+    Go to `/admin/projects` → Click **Add Project**
+  </Step>
+  <Step title="Basic Info">
+    - **Title**: Project name
+    - **Category**: Select category
+    - **Description**: Short summary
+    - **Thumbnail**: Main project image
+  </Step>
+  <Step title="Gallery">
+    Upload multiple images for the project gallery.
+  </Step>
+  <Step title="Details">
+    Add project details like:
+    - Client name
+    - Completion date
+    - Technologies used
+    - Project link
+  </Step>
+  <Step title="URL Settings">
+    - **Custom Slug**: URL-friendly identifier
+    - **Use Project Prefix**: Toggle `/project/` prefix
+      - ON: `/project/my-project`
+      - OFF: `/my-project`
+  </Step>
+  <Step title="Save">
+    Toggle **Featured** if desired, then save.
+  </Step>
+</Steps>
+
+## Public URLs
+
+| Page | URL Pattern |
+|------|-------------|
+| All Projects | `/projects` |
+| Single Project | `/project/{slug}` or `/{slug}` |
+| By Category | `/projects?category={name}` |
+
+## Database Schema
+
+### projects Collection
+
+```javascript
+{
+  title: "GIS Mapping Platform",
+  category: "GIS",
+  description: "Interactive mapping solution...",
+  thumbnailUrl: "https://...",
+  galleryUrls: ["https://...", "https://..."],
+  fullDescription: "<h2>Overview</h2>...",
+  customSlug: "gis-mapping-platform",
+  useProjectPrefix: true,
+  projectLink: "https://example.com",
+  projectDetails: [
+    "Client: ABC Corp",
+    "Date: 2024",
+    "Tech: React, Leaflet"
+  ],
+  featured: true,
+  likes: 0
+}
+```
+
+## Link Management
+
+The URL system prevents collisions with:
+- Other projects
+- Blog posts
+- Static pages
+- Shortlinks
+
+When creating a custom slug, the system checks for conflicts and warns you.
+
+## Tips
+
+<Tip>
+  Use descriptive slugs like `gis-mapping-platform` instead of `project-1` for better SEO.
+</Tip>
+
+<Tip>
+  Keep thumbnails at 800×600px for consistent card displays.
+</Tip>

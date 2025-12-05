@@ -1,0 +1,80 @@
+---
+title: "Appwrite Overview"
+description: "Backend setup with Appwrite for database and storage"
+---
+
+# Appwrite Setup Overview
+
+This portfolio uses Appwrite as the backend for:
+- **Database** - Storing all content (blogs, projects, products, settings)
+- **Storage** - Hosting images and files
+- **Authentication** - Admin login
+
+## Create Appwrite Project
+
+1. Go to [cloud.appwrite.io](https://cloud.appwrite.io)
+2. Click **Create Project**
+3. Name it (e.g., "Portfolio")
+4. Note your **Project ID**
+
+## Required Collections
+
+| Collection | Purpose |
+|------------|---------|
+| `blogs` | Blog posts |
+| `blog_categories` | Blog categories |
+| `projects` | Portfolio projects |
+| `project_categories` | Project categories |
+| `products` | Shop products |
+| `shop_categories` | Product categories |
+| `orders` | Customer orders |
+| `shortlinks` | URL shortener |
+| `shortlink_analytics` | Click tracking |
+| `shortlink_domains` | Custom domains |
+| `header_section` | Homepage header |
+| `about_me` | About section |
+| `menubar_settings` | Navigation settings |
+| `custom_fonts` | Uploaded fonts |
+
+## Required Storage Buckets
+
+| Bucket ID | Purpose |
+|-----------|---------|
+| `reactbucket` | General images |
+| `blog_images` | Blog thumbnails & content |
+| `shop-images` | Product images |
+| `editor-images` | Rich text editor uploads |
+| `shortlink-previews` | Shortlink preview images |
+| `custom-fonts` | Custom font files |
+| `order-files` | Order delivery files |
+
+## Quick Setup Checklist
+
+<Steps>
+  <Step title="Create Database">
+    Create a database named `portfolio_db`
+  </Step>
+  <Step title="Create Collections">
+    Follow the [Database Setup](/appwrite/database-setup) guide
+  </Step>
+  <Step title="Create Storage Buckets">
+    Follow the [Storage Buckets](/appwrite/storage-buckets) guide
+  </Step>
+  <Step title="Set Permissions">
+    Follow the [Permissions](/appwrite/permissions) guide
+  </Step>
+  <Step title="Add Platform">
+    Add `localhost` and your production domain to Platforms
+  </Step>
+</Steps>
+
+## Environment Variables
+
+After setup, add these to your `.env`:
+
+```env
+VITE_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+VITE_APPWRITE_PROJECT_ID=your_project_id
+VITE_APPWRITE_DATABASE_ID=portfolio_db
+VITE_APPWRITE_STORAGE_ID=reactbucket
+```

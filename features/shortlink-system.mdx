@@ -1,0 +1,149 @@
+---
+title: "Shortlink System"
+description: "URL shortener with analytics and custom domains"
+---
+
+# Shortlink System
+
+A comprehensive URL shortening solution with analytics and custom domain support.
+
+## Features
+
+- Create short URLs from long URLs
+- Custom paths (e.g., `yoursite.com/my-link`)
+- Preview images for social media
+- Click analytics (countries, devices, referrers)
+- Custom domain support
+- Collision detection with existing routes
+
+## Admin URL
+
+| Page | URL |
+|------|-----|
+| Shortlink Management | `/admin/shortlinks` |
+| Domain Management | `/admin/shortlinks/domains` |
+
+## Creating a Shortlink
+
+<Steps>
+  <Step title="Open Shortlinks">
+    Go to `/admin/shortlinks`
+  </Step>
+  <Step title="Click Create">
+    Click **Create Shortlink**
+  </Step>
+  <Step title="Enter URL">
+    Paste the long destination URL
+  </Step>
+  <Step title="Choose Path">
+    - **Auto-generate**: Random short path
+    - **Custom**: Enter your own (e.g., `winter-sale`)
+  </Step>
+  <Step title="Optional: Preview Image">
+    Upload an image for social media previews
+  </Step>
+  <Step title="Create">
+    Click **Create Shortlink**
+  </Step>
+</Steps>
+
+## Analytics
+
+Click the analytics icon on any shortlink to view:
+
+| Metric | Description |
+|--------|-------------|
+| Total Clicks | Overall click count |
+| Countries | Geographic distribution |
+| Devices | Desktop, mobile, tablet breakdown |
+| Referrers | Where clicks came from |
+| Browsers | Browser usage stats |
+
+Export analytics to CSV for further analysis.
+
+## Custom Domains
+
+### Setup Steps
+
+<Steps>
+  <Step title="Add Domain">
+    Go to Domain Management → **Add Domain**
+    Enter subdomain (e.g., `link.yourdomain.com`)
+  </Step>
+  <Step title="Configure DNS">
+    Add these records in your DNS provider:
+    
+    **CNAME Record:**
+    ```
+    Name: link
+    Value: yourdomain.com
+    ```
+    
+    **TXT Record (for verification):**
+    ```
+    Name: _shortlink-verify.link
+    Value: [verification token shown in dashboard]
+    ```
+  </Step>
+  <Step title="Verify">
+    Wait 5-10 minutes for DNS propagation, then click **Verify DNS**
+  </Step>
+  <Step title="Use">
+    Select the custom domain when creating new shortlinks
+  </Step>
+</Steps>
+
+## Database Schema
+
+### shortlinks Collection
+
+```javascript
+{
+  customPath: "winter-sale",
+  destinationUrl: "https://example.com/products?utm_source=...",
+  previewImageUrl: "https://...",
+  title: "Winter Sale 2024",
+  description: "50% off all items",
+  isActive: true,
+  clickCount: 150,
+  createdAt: "2024-01-01T00:00:00Z"
+}
+```
+
+### shortlink_analytics Collection
+
+```javascript
+{
+  shortlinkId: "abc123",
+  timestamp: "2024-01-15T10:30:00Z",
+  country: "US",
+  countryName: "United States",
+  deviceType: "mobile",
+  browser: "Chrome",
+  referrer: "https://twitter.com"
+}
+```
+
+## Collision Detection
+
+The system automatically checks if your custom path conflicts with:
+- Existing blog posts
+- Project pages
+- Static routes
+- Other shortlinks
+
+A warning appears if a collision is detected.
+
+## Best Practices
+
+<Tip>
+  Use descriptive paths like `winter-sale` instead of random strings for better memorability.
+</Tip>
+
+<Tip>
+  Add preview images to increase click-through rates by 30-50% on social media.
+</Tip>
+
+<Warning>
+  Shortlinks are case-insensitive. `My-Link` and `my-link` are the same.
+</Warning>

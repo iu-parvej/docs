@@ -1,0 +1,99 @@
+---
+title: "Storage Buckets"
+description: "Configure Appwrite storage buckets for images and files"
+---
+
+# Storage Buckets Setup
+
+## Create Buckets
+
+Go to Appwrite Console → **Storage** → **Create Bucket** for each:
+
+### reactbucket (Main Images)
+
+| Setting | Value |
+|---------|-------|
+| Bucket ID | `reactbucket` |
+| Name | Main Images |
+| Max File Size | 10 MB |
+| Allowed Extensions | `jpg, jpeg, png, gif, webp, svg` |
+| File Security | Enabled |
+
+### blog_images
+
+| Setting | Value |
+|---------|-------|
+| Bucket ID | `blog_images` |
+| Name | Blog Images |
+| Max File Size | 10 MB |
+| Allowed Extensions | `jpg, jpeg, png, gif, webp` |
+
+### shop-images
+
+| Setting | Value |
+|---------|-------|
+| Bucket ID | `shop-images` |
+| Name | Shop Images |
+| Max File Size | 10 MB |
+| Allowed Extensions | `jpg, jpeg, png, gif, webp` |
+
+### editor-images
+
+| Setting | Value |
+|---------|-------|
+| Bucket ID | `editor-images` |
+| Name | Editor Images |
+| Max File Size | 10 MB |
+| Allowed Extensions | `jpg, jpeg, png, gif, webp, svg` |
+
+<Note>
+  This bucket stores images uploaded through the rich text editor.
+</Note>
+
+### shortlink-previews
+
+| Setting | Value |
+|---------|-------|
+| Bucket ID | `shortlink-previews` |
+| Name | Shortlink Previews |
+| Max File Size | 5 MB |
+| Allowed Extensions | `jpg, jpeg, png, webp, gif` |
+
+### custom-fonts
+
+| Setting | Value |
+|---------|-------|
+| Bucket ID | `custom-fonts` |
+| Name | Custom Fonts |
+| Max File Size | 5 MB |
+| Allowed Extensions | `ttf, otf, woff, woff2` |
+
+### order-files
+
+| Setting | Value |
+|---------|-------|
+| Bucket ID | `order-files` |
+| Name | Order Delivery Files |
+| Max File Size | 50 MB |
+| Allowed Extensions | `*` (all types) |
+
+<Warning>
+  This bucket should have restricted read access - only authenticated users who own the order should access files.
+</Warning>
+
+## Bucket Permissions Summary
+
+| Bucket | Read | Create | Update | Delete |
+|--------|------|--------|--------|--------|
+| reactbucket | Any | Users | Users | Users |
+| blog_images | Any | Users | Users | Users |
+| shop-images | Any | Users | Users | Users |
+| editor-images | Any | Users | Users | Users |
+| shortlink-previews | Any | Users | Users | Users |
+| custom-fonts | Any | Users | Users | Users |
+| order-files | Users | Users | Users | Users |
+
+<Tip>
+  "Any" means public read access (images can be viewed by anyone).
+  "Users" means only authenticated users (admins) can modify.
+</Tip>

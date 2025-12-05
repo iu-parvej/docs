@@ -1,0 +1,176 @@
+---
+title: "Shop System"
+description: "E-commerce with PayPal integration and order management"
+---
+
+# Shop System
+
+Full e-commerce functionality with product management, cart, and PayPal checkout.
+
+## Features
+
+- Product catalog with categories
+- Sale prices and featured products
+- Image galleries per product
+- Shopping cart (persistent)
+- PayPal checkout integration
+- Order tracking with status updates
+- Secure file delivery for digital products
+- Coupon system
+
+## Admin URLs
+
+| Page | URL |
+|------|-----|
+| Products | `/admin/products` |
+| Categories | `/admin/shop-categories` |
+| Orders | `/admin/orders` |
+| Coupons | `/admin/coupons` |
+
+## Adding Products
+
+<Steps>
+  <Step title="Create Category">
+    Go to `/admin/shop-categories` and add product categories.
+  </Step>
+  <Step title="Add Product">
+    Go to `/admin/products` → **Add Product**
+  </Step>
+  <Step title="Basic Info">
+    - **Name**: Product name
+    - **Price**: Regular price
+    - **Category**: Select category
+    - **Tags**: Add searchable tags
+  </Step>
+  <Step title="Sale Settings">
+    - Toggle **On Sale**
+    - Enter **Discounted Price**
+  </Step>
+  <Step title="Images">
+    - Upload main product image
+    - Add gallery images (shown as thumbnails)
+  </Step>
+  <Step title="Description">
+    Use rich text editor for:
+    - **Description**: Main product details
+    - **Additional Info**: Specs, sizing, etc.
+  </Step>
+  <Step title="Save">
+    Toggle **Featured** for homepage display, then save.
+  </Step>
+</Steps>
+
+## Order Management
+
+### Order Statuses
+
+| Status | Description |
+|--------|-------------|
+| `placed` | Order received |
+| `processing` | Being prepared |
+| `completed` | Delivered/fulfilled |
+| `cancelled` | Order cancelled |
+
+### Managing Orders
+
+1. Go to `/admin/orders`
+2. Click on an order to view details
+3. Update status from dropdown
+4. Add notes for each step (visible to customer)
+5. Upload delivery files for digital products
+
+### Secure File Delivery
+
+For digital products:
+1. Upload files to the order
+2. Customer receives secure, time-limited download links
+3. Links expire after 15 minutes
+4. Only the order owner can download
+
+## Customer Experience
+
+### Shopping Flow
+
+1. Browse products on `/shop`
+2. Click product to view details
+3. Add to cart
+4. View cart and adjust quantities
+5. Proceed to checkout
+6. Pay with PayPal
+7. View order status on dashboard
+
+### Customer Dashboard
+
+Customers can view their orders at `/dashboard`:
+- Order history
+- Status tracking with visual stepper
+- Download links for digital products
+- Admin notes for each step
+
+## PayPal Integration
+
+### Setup
+
+Add to your `.env`:
+
+```env
+VITE_PAYPAL_CLIENT_ID=your_paypal_client_id
+```
+
+Get your Client ID from [PayPal Developer Dashboard](https://developer.paypal.com).
+
+### Test Mode
+
+Use PayPal Sandbox for testing:
+1. Create sandbox accounts in PayPal Developer
+2. Use sandbox Client ID
+3. Test purchases with sandbox buyer account
+
+## Database Schema
+
+### products Collection
+
+```javascript
+{
+  name: "Digital Art Pack",
+  price: 29.99,
+  discountedPrice: 19.99,
+  onSale: true,
+  featured: true,
+  imageUrl: "https://...",
+  galleryUrls: ["https://...", "https://..."],
+  category: "Digital Products",
+  tags: ["art", "design", "digital"],
+  description: "<p>Beautiful digital art...</p>",
+  additionalInfo: "<p>Format: PNG, 300dpi...</p>"
+}
+```
+
+### orders Collection
+
+```javascript
+{
+  orderId: "ORD-2024-001",
+  customerId: "user123",
+  customerEmail: "customer@example.com",
+  items: "[{\"name\":\"Digital Art Pack\",\"price\":19.99,\"qty\":1}]",
+  subtotal: 19.99,
+  discount: 0,
+  total: 19.99,
+  status: "completed",
+  paypalOrderId: "PAY-123..."
+}
+```
+
+## Coupon System
+
+Create discount coupons at `/admin/coupons`:
+
+| Field | Description |
+|-------|-------------|
+| Code | Coupon code (e.g., `SAVE20`) |
+| Type | Percentage or fixed amount |
+| Value | Discount value |
+| Min Purchase | Minimum order amount |
+| Expiry | Expiration date |
+| Usage Limit | Max uses |

@@ -1,0 +1,145 @@
+---
+title: "Database Setup"
+description: "Create collections and attributes in Appwrite"
+---
+
+# Database Collections Setup
+
+## Create Database
+
+1. Go to Appwrite Console → **Databases**
+2. Click **Create Database**
+3. Set ID: `portfolio_db`
+4. Name: `Portfolio Database`
+
+## Core Collections
+
+### blogs
+
+Main blog posts collection.
+
+| Attribute | Type | Size | Required |
+|-----------|------|------|----------|
+| `title` | String | 255 | Yes |
+| `category` | String | 100 | Yes |
+| `description` | String | 500 | Yes |
+| `thumbnailUrl` | String | 2000 | Yes |
+| `galleryUrls` | String[] | 2000 | No |
+| `likes` | Integer | - | No |
+| `featured` | Boolean | - | No |
+| `fullDescription` | String | 100000 | Yes |
+| `customSlug` | String | 255 | Yes |
+| `authorNames` | String[] | 255 | No |
+| `authorImages` | String[] | 2000 | No |
+| `publishDate` | String | 50 | Yes |
+
+**Indexes:**
+- `slug_idx` (unique) on `customSlug`
+- `category_idx` on `category`
+- `featured_idx` on `featured`
+
+### projects
+
+Portfolio projects collection.
+
+| Attribute | Type | Size | Required |
+|-----------|------|------|----------|
+| `title` | String | 255 | Yes |
+| `category` | String | 100 | Yes |
+| `description` | String | 500 | Yes |
+| `thumbnailUrl` | String | 2000 | Yes |
+| `galleryUrls` | String[] | 2000 | No |
+| `likes` | Integer | - | No |
+| `featured` | Boolean | - | No |
+| `fullDescription` | String | 100000 | Yes |
+| `customSlug` | String | 100 | Yes |
+| `useProjectPrefix` | Boolean | - | Yes |
+| `projectLink` | String | 2000 | No |
+| `projectDetails` | String[] | 500 | No |
+
+### products
+
+Shop products collection.
+
+| Attribute | Type | Size | Required |
+|-----------|------|------|----------|
+| `name` | String | 255 | Yes |
+| `price` | Float | - | Yes |
+| `discountedPrice` | Float | - | No |
+| `onSale` | Boolean | - | No |
+| `featured` | Boolean | - | No |
+| `imageUrl` | String | 2048 | No |
+| `category` | String | 255 | No |
+| `tags` | String[] | - | No |
+| `description` | String | 10000 | No |
+| `additionalInfo` | String | 10000 | No |
+| `galleryUrls` | String[] | - | No |
+
+### orders
+
+Customer orders collection.
+
+| Attribute | Type | Size | Required |
+|-----------|------|------|----------|
+| `orderId` | String | 100 | Yes |
+| `customerId` | String | 50 | Yes |
+| `customerName` | String | 200 | No |
+| `customerEmail` | String | 200 | Yes |
+| `items` | String | 10000 | Yes |
+| `subtotal` | Float | - | Yes |
+| `discount` | Float | - | No |
+| `couponCode` | String | 50 | No |
+| `total` | Float | - | Yes |
+| `status` | String | 20 | Yes |
+| `paypalOrderId` | String | 100 | No |
+
+**Status values:** `placed`, `processing`, `completed`, `cancelled`
+
+### shortlinks
+
+URL shortener collection.
+
+| Attribute | Type | Size | Required |
+|-----------|------|------|----------|
+| `customPath` | String | 100 | Yes |
+| `destinationUrl` | URL | - | Yes |
+| `previewImageUrl` | URL | - | No |
+| `title` | String | 255 | No |
+| `description` | String | 500 | No |
+| `isActive` | Boolean | - | Yes |
+| `clickCount` | Integer | - | No |
+| `createdAt` | Datetime | - | Yes |
+
+**Indexes:**
+- `customPath_idx` (unique) on `customPath`
+
+## Category Collections
+
+For `blog_categories`, `project_categories`, `shop_categories`:
+
+| Attribute | Type | Size | Required |
+|-----------|------|------|----------|
+| `name` | String | 100 | Yes |
+| `color` | String | 20 | No |
+| `order` | Integer | - | No |
+
+## Settings Collections
+
+### header_section
+
+| Attribute | Type | Size | Required |
+|-----------|------|------|----------|
+| `name` | String | 100 | Yes |
+| `roles` | String[] | 100 | No |
+| `description` | String | 1000 | No |
+| `nameFont` | String | 200 | No |
+| `rolesFont` | String | 200 | No |
+| `descriptionFont` | String | 200 | No |
+
+### custom_fonts
+
+| Attribute | Type | Size | Required |
+|-----------|------|------|----------|
+| `name` | String | 100 | Yes |
+| `fileId` | String | 100 | Yes |
+| `fileUrl` | String | 2000 | Yes |

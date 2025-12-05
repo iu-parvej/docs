@@ -1,0 +1,109 @@
+---
+title: "Blog System"
+description: "Full-featured blog with categories, authors, and rich content"
+---
+
+# Blog System
+
+A complete blogging platform integrated into your portfolio.
+
+## Features
+
+- Rich text editor with full formatting
+- Multiple authors per post with profile images
+- Category management with custom colors
+- Featured posts for homepage display
+- Custom URL slugs
+- Image galleries
+- Publication date scheduling
+
+## Admin URLs
+
+| Page | URL |
+|------|-----|
+| Blog Management | `/admin/blogs` |
+| Categories | `/admin/blog-categories` |
+
+## Creating a Blog Post
+
+<Steps>
+  <Step title="Create Category">
+    Go to `/admin/blog-categories` and create at least one category.
+  </Step>
+  <Step title="Add New Blog">
+    Go to `/admin/blogs` → Click **Add Blog**
+  </Step>
+  <Step title="Fill Details">
+    - **Title**: Blog post title
+    - **Category**: Select from dropdown
+    - **Description**: Short summary (shown on cards)
+    - **Thumbnail**: Upload main image
+    - **Full Description**: Use rich text editor
+  </Step>
+  <Step title="Add Authors">
+    Click **Add Author** to add multiple authors with profile images.
+  </Step>
+  <Step title="Set URL">
+    - Auto-generate slug from title, or
+    - Enter custom slug manually
+  </Step>
+  <Step title="Publish">
+    - Set publication date
+    - Toggle **Featured** for homepage display
+    - Click **Save**
+  </Step>
+</Steps>
+
+## Public URLs
+
+| Page | URL Pattern |
+|------|-------------|
+| All Blogs | `/blogs` |
+| Single Blog | `/blog/{slug}` |
+| By Category | `/blogs?category={name}` |
+
+## Database Schema
+
+### blogs Collection
+
+```javascript
+{
+  title: "Getting Started with GIS",
+  category: "Technology",
+  description: "A comprehensive guide...",
+  thumbnailUrl: "https://...",
+  fullDescription: "<h2>Introduction</h2>...",
+  customSlug: "getting-started-with-gis",
+  authorNames: ["Parvej Hossain"],
+  authorImages: ["https://..."],
+  publishDate: "2024-01-10",
+  featured: true,
+  likes: 0
+}
+```
+
+### blog_categories Collection
+
+```javascript
+{
+  name: "Technology",
+  color: "#3b82f6",
+  order: 1
+}
+```
+
+## Rich Text Features
+
+The blog editor supports:
+- Headings (H1, H2, H3)
+- Bold, italic, underline
+- Text colors and fonts
+- Bullet and numbered lists
+- Images with upload
+- Embedded videos (YouTube, Vimeo)
+- Photo grids (24 layouts)
+- Tables
+- Code blocks
+- Blockquotes
+
+See [Rich Text Editor](/features/rich-text-editor) for full documentation.

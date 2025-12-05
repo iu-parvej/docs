@@ -1,0 +1,155 @@
+---
+title: "Font Management"
+description: "Manage Google Fonts and custom font uploads"
+---
+
+# Font Management
+
+A comprehensive font system with 70+ Google Fonts and custom font upload support.
+
+## Features
+
+- 70+ curated Google Fonts
+- Custom font upload (.ttf, .otf, .woff)
+- Full Bangla language support
+- Live preview before applying
+- Search and filter by category
+- Reusable font selector component
+
+## Admin URL
+
+| Page | URL |
+|------|-----|
+| Font Management | `/admin/settings/fonts` |
+
+## Using Fonts
+
+### Upload Custom Font
+
+<Steps>
+  <Step title="Open Font Management">
+    Go to `/admin/settings/fonts`
+  </Step>
+  <Step title="Upload">
+    - Enter font name (e.g., "Kalpurush")
+    - Select `.ttf` file (max 5MB)
+    - Click **Upload Font**
+  </Step>
+  <Step title="Use">
+    Font appears in all font selectors with a purple "Custom" badge
+  </Step>
+</Steps>
+
+### Apply Fonts to Content
+
+1. Edit any section (Header, About Me, etc.)
+2. Find the font selector dropdown
+3. Search or browse fonts
+4. Select your font
+5. Preview updates in real-time
+6. Save changes
+
+## Available Google Fonts
+
+### Serif Fonts
+- Playfair Display
+- Merriweather
+- Lora
+- Crimson Text
+- Libre Baskerville
+- Cormorant Garamond
+
+### Sans-Serif Fonts
+- Roboto
+- Open Sans
+- Lato
+- Montserrat
+- Poppins
+- Inter
+- Nunito
+
+### Display Fonts
+- Bebas Neue
+- Oswald
+- Raleway
+- Abril Fatface
+- Righteous
+
+### Bangla Fonts
+- Noto Sans Bengali
+- Noto Serif Bengali
+- Hind Siliguri
+- Tiro Bangla
+- Mukta
+- Baloo Da 2
+
+## Font Selector Component
+
+The `FontSelector` component is reusable across admin pages:
+
+```jsx
+import FontSelector from '../components/FontSelector/FontSelector';
+
+<FontSelector
+  value={selectedFont}
+  onChange={setSelectedFont}
+  label="Title Font"
+  previewText="Preview Text"
+/>
+```
+
+### Props
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `value` | string | Current font value |
+| `onChange` | function | Callback when font changes |
+| `label` | string | Label text |
+| `previewText` | string | Text to show in preview |
+
+## Where Fonts Are Used
+
+| Section | Font Options |
+|---------|--------------|
+| Header | Name, Roles, Description |
+| About Me | Vertical Name |
+| Blog | Title, Content |
+| Projects | Title, Content |
+
+## Database Schema
+
+### custom_fonts Collection
+
+```javascript
+{
+  name: "Kalpurush",
+  fileId: "abc123",
+  fileUrl: "https://cloud.appwrite.io/v1/storage/..."
+}
+```
+
+## Recommended Bangla Fonts
+
+For custom Bangla fonts, download from [Ekushey Fonts](https://www.omicronlab.com/bangla-fonts.html):
+
+- Kalpurush
+- SolaimanLipi
+- Siyam Rupali
+- Nikosh
+- Akaash
+
+## Troubleshooting
+
+### Font Not Displaying
+
+1. Check file format (must be .ttf, .otf, or .woff)
+2. Verify file size < 5MB
+3. Check browser console for errors
+4. Ensure storage bucket has public read access
+
+### Bangla Text Shows Boxes
+
+The font doesn't support Bangla characters. Use:
+- Noto Sans Bengali
+- Noto Serif Bengali
+- Or upload a Bangla-compatible custom font

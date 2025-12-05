@@ -1,0 +1,133 @@
+---
+title: "Permissions"
+description: "Configure collection and bucket permissions in Appwrite"
+---
+
+# Permissions Setup
+
+## Understanding Permissions
+
+Appwrite uses role-based permissions:
+
+| Role | Description |
+|------|-------------|
+| `Any` | Anyone (including unauthenticated users) |
+| `Users` | Any authenticated user |
+| `Guests` | Unauthenticated users only |
+| `User:ID` | Specific user by ID |
+
+## Collection Permissions
+
+### Public Content (Read-Only)
+
+For collections that visitors can view but only admins can edit:
+
+**Collections:** `blogs`, `projects`, `products`, `blog_categories`, `project_categories`, `shop_categories`, `header_section`, `about_me`, `menubar_settings`
+
+| Permission | Role |
+|------------|------|
+| Read | Any |
+| Create | Users |
+| Update | Users |
+| Delete | Users |
+
+### Private Content
+
+For collections with sensitive data:
+
+**Collections:** `orders`, `shortlink_analytics`
+
+| Permission | Role |
+|------------|------|
+| Read | Users |
+| Create | Users |
+| Update | Users |
+| Delete | Users |
+
+### Admin-Only Content
+
+**Collections:** `shortlinks`, `shortlink_domains`, `custom_fonts`
+
+| Permission | Role |
+|------------|------|
+| Read | Any |
+| Create | Users |
+| Update | Users |
+| Delete | Users |
+
+## Setting Permissions in Console
+
+<Steps>
+  <Step title="Open Collection">
+    Go to **Databases** → `portfolio_db` → Select collection
+  </Step>
+  <Step title="Go to Settings">
+    Click the **Settings** tab
+  </Step>
+  <Step title="Configure Permissions">
+    Under **Permissions**, click **Add Role** and set:
+    - Select role (Any, Users, etc.)
+    - Check permissions (Read, Create, Update, Delete)
+  </Step>
+  <Step title="Save">
+    Click **Update** to save changes
+  </Step>
+</Steps>
+
+## Storage Bucket Permissions
+
+### Public Buckets (Images)
+
+For image buckets that need public viewing:
+
+| Permission | Role |
+|------------|------|
+| Read | Any |
+| Create | Users |
+| Update | Users |
+| Delete | Users |
+
+### Private Buckets
+
+For `order-files` bucket:
+
+| Permission | Role |
+|------------|------|
+| Read | Users |
+| Create | Users |
+| Update | Users |
+| Delete | Users |
+
+## Document-Level Security
+
+For orders, you may want document-level security so users can only see their own orders:
+
+1. Enable **Document Security** in collection settings
+2. When creating an order, set permissions:
+
+```javascript
+await databases.createDocument(
+  'portfolio_db',
+  'orders',
+  ID.unique(),
+  orderData,
+  [
+    Permission.read(Role.user(userId)),
+    Permission.update(Role.user(userId))
+  ]
+);
+```
+
+## Platform Configuration
+
+Don't forget to add your domains to **Settings** → **Platforms**:
+
+| Platform | Hostname |
+|----------|----------|
+| Web | `localhost` |
+| Web | `your-domain.vercel.app` |
+| Web | `yourdomain.com` |
+
+<Warning>
+  Without platform configuration, your frontend cannot communicate with Appwrite (CORS errors).
+</Warning>

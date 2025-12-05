@@ -1,0 +1,66 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Portfolio Documentation",
+  "logo": {
+    "dark": "/logo/dark.svg",
+    "light": "/logo/light.svg"
+  },
+  "favicon": "/favicon.svg",
+  "colors": {
+    "primary": "#1E8479",
+    "light": "#07C983",
+    "dark": "#105652",
+    "anchors": {
+      "from": "#1E8479",
+      "to": "#07C983"
+    }
+  },
+  "topbarCtaButton": {
+    "name": "Live Demo",
+    "url": "https://portfolioofparvej.mintlify.app"
+  },
+  "anchors": [
+    {
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com/iu-parvej"
+    }
+  ],
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": ["introduction", "quick-start", "deployment"]
+    },
+    {
+      "group": "Appwrite Setup",
+      "pages": [
+        "appwrite/overview",
+        "appwrite/database-setup",
+        "appwrite/storage-buckets",
+        "appwrite/permissions"
+      ]
+    },
+    {
+      "group": "Features",
+      "pages": [
+        "features/blog-system",
+        "features/project-gallery",
+        "features/shortlink-system",
+        "features/shop-system",
+        "features/font-management",
+        "features/rich-text-editor"
+      ]
+    },
+    {
+      "group": "Admin Panel",
+      "pages": [
+        "admin/overview",
+        "admin/content-management",
+        "admin/settings"
+      ]
+    }
+  ],
+  "footerSocials": {
+    "github": "https://github.com/iu-parvej"
+  }
+}
