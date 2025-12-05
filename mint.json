@@ -29,7 +29,7 @@
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["introduction", "quick-start", "deployment"]
+      "pages": ["introduction", "quick-start", "deployment", "troubleshooting"]
     },
     {
       "group": "Appwrite Setup",
@@ -48,7 +48,8 @@
         "features/shortlink-system",
         "features/shop-system",
         "features/font-management",
-        "features/rich-text-editor"
+        "features/rich-text-editor",
+        "features/photo-grids"
       ]
     },
     {
@@ -57,6 +58,14 @@
         "admin/overview",
         "admin/content-management",
         "admin/settings"
+      ]
+    },
+    {
+      "group": "Developer Guide",
+      "pages": [
+        "developer/architecture",
+        "developer/api-reference",
+        "developer/customization"
       ]
     }
   ],

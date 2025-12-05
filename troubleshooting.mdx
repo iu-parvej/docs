@@ -1,0 +1,281 @@
+---
+title: "Troubleshooting"
+description: "Common issues and solutions for your portfolio website"
+---
+
+# Troubleshooting Guide
+
+Quick solutions to common problems you might encounter.
+
+## Database & Backend Issues
+
+### Data Not Loading
+
+<AccordionGroup>
+  <Accordion title="Site shows empty/basic mode">
+    **Cause:** Environment variables not configured or Appwrite connection failed.
+    
+    **Solution:**
+    1. Check `.env` file exists with correct values
+    2. Verify Appwrite project ID is correct
+    3. Check browser console for errors
+    4. Ensure Appwrite platform includes your domain
+    
+    ```env
+    VITE_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+    VITE_APPWRITE_PROJECT_ID=your_project_id
+    VITE_APPWRITE_DATABASE_ID=portfolio_db
+    ```
+  </Accordion>
+  
+  <Accordion title="CORS Error in Console">
+    **Error:** `Access to XMLHttpRequest blocked by CORS policy`
+    
+    **Solution:**
+    1. Go to Appwrite Console → Settings → Platforms
+    2. Add your domain:
+       - `localhost` (for development)
+       - `your-site.vercel.app` (for production)
+       - `yourdomain.com` (custom domain)
+    3. Wait 1-2 minutes for changes to propagate
+  </Accordion>
+  
+  <Accordion title="Collection Not Found (404)">
+    **Error:** `Collection or database not found`
+    
+    **Solution:**
+    1. Verify collection exists in Appwrite Console
+    2. Check collection ID matches exactly (case-sensitive)
+    3. Ensure database ID is correct in `.env`
+  </Accordion>
+  
+  <Accordion title="Permission Denied (401/403)">
+    **Error:** `User is not authorized`
+    
+    **Solution:**
+    1. Check collection permissions in Appwrite
+    2. For public content: Add "Any" with Read permission
+    3. For admin content: Add "Users" with all permissions
+    4. See [Permissions Guide](/appwrite/permissions)
+  </Accordion>
+</AccordionGroup>
+
+## Image & Storage Issues
+
+<AccordionGroup>
+  <Accordion title="Images Not Uploading">
+    **Possible Causes:**
+    - File too large (check bucket max size)
+    - Wrong file format
+    - Bucket permissions incorrect
+    
+    **Solution:**
+    1. Check file size (usually max 10MB)
+    2. Use supported formats: jpg, png, gif, webp
+    3. Verify bucket has "Users" create permission
+    4. Check browser console for specific error
+  </Accordion>
+  
+  <Accordion title="Images Not Displaying">
+    **Possible Causes:**
+    - Bucket doesn't have public read access
+    - Image URL is incorrect
+    - Image was deleted
+    
+    **Solution:**
+    1. Check bucket has "Any" read permission
+    2. Test image URL directly in browser
+    3. Re-upload the image if needed
+  </Accordion>
+  
+  <Accordion title="Font Upload Fails">
+    **Solution:**
+    1. Ensure file is `.ttf`, `.otf`, or `.woff` format
+    2. Check file size < 5MB
+    3. Verify `custom-fonts` bucket exists
+    4. Check bucket permissions
+  </Accordion>
+</AccordionGroup>
+
+## Deployment Issues
+
+<AccordionGroup>
+  <Accordion title="Vercel Build Fails">
+    **Common Causes:**
+    - Missing dependencies
+    - Environment variables not set
+    - Syntax errors in code
+    
+    **Solution:**
+    1. Check Vercel build logs for specific error
+    2. Run `npm run build` locally to test
+    3. Ensure all env variables are set in Vercel
+    4. Check for TypeScript/ESLint errors
+  </Accordion>
+  
+  <Accordion title="404 on Page Refresh">
+    **Cause:** SPA routing not configured
+    
+    **Solution:** Add `vercel.json` to project root:
+    ```json
+    {
+      "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Environment Variables Not Working">
+    **Solution:**
+    1. Variables must start with `VITE_` prefix
+    2. Redeploy after adding variables
+    3. Check variables are set for correct environment (Production/Preview)
+    4. Clear browser cache after redeploying
+  </Accordion>
+</AccordionGroup>
+
+## Admin Panel Issues
+
+<AccordionGroup>
+  <Accordion title="Can't Login to Admin">
+    **Solution:**
+    1. Verify Appwrite account exists
+    2. Check email is verified in Appwrite
+    3. Clear browser cookies and try again
+    4. Check Appwrite Console for user status
+  </Accordion>
+  
+  <Accordion title="Changes Not Saving">
+    **Possible Causes:**
+    - Network error
+    - Permission denied
+    - Validation error
+    
+    **Solution:**
+    1. Check browser console for errors
+    2. Verify you're logged in
+    3. Check all required fields are filled
+    4. Try refreshing and re-saving
+  </Accordion>
+  
+  <Accordion title="Rich Text Editor Not Working">
+    **Solution:**
+    1. Clear browser cache
+    2. Try a different browser
+    3. Check for JavaScript errors in console
+    4. Ensure all dependencies are installed
+  </Accordion>
+</AccordionGroup>
+
+## Shortlink Issues
+
+<AccordionGroup>
+  <Accordion title="Shortlink Not Redirecting">
+    **Solution:**
+    1. Check shortlink is marked "Active"
+    2. Verify path doesn't have typos
+    3. Clear browser cache
+    4. Check if path conflicts with existing routes
+  </Accordion>
+  
+  <Accordion title="Custom Domain Not Verifying">
+    **Solution:**
+    1. Wait 10-15 minutes for DNS propagation
+    2. Verify DNS records are correct:
+       - CNAME pointing to your domain
+       - TXT record with verification token
+    3. Check DNS with online tools (dnschecker.org)
+    4. Ensure Cloudflare proxy is enabled (if using)
+  </Accordion>
+  
+  <Accordion title="Analytics Not Recording">
+    **Solution:**
+    1. Check `shortlink_analytics` collection exists
+    2. Verify collection permissions
+    3. Test with incognito/private browsing
+    4. Check browser console for errors
+  </Accordion>
+</AccordionGroup>
+
+## Shop & Payment Issues
+
+<AccordionGroup>
+  <Accordion title="PayPal Not Loading">
+    **Solution:**
+    1. Verify `VITE_PAYPAL_CLIENT_ID` is set
+    2. Check PayPal Client ID is correct
+    3. Ensure PayPal app is enabled
+    4. Test with sandbox credentials first
+  </Accordion>
+  
+  <Accordion title="Order Not Creating">
+    **Solution:**
+    1. Check `orders` collection exists with all attributes
+    2. Verify collection permissions
+    3. Check browser console for validation errors
+    4. Ensure all required fields are provided
+  </Accordion>
+  
+  <Accordion title="Download Links Not Working">
+    **Solution:**
+    1. Check `order-files` bucket exists
+    2. Verify user is logged in
+    3. Ensure user email matches order email
+    4. Check if download token expired (15 min limit)
+  </Accordion>
+</AccordionGroup>
+
+## Performance Issues
+
+<AccordionGroup>
+  <Accordion title="Site Loading Slowly">
+    **Solutions:**
+    1. Optimize images before uploading (compress, resize)
+    2. Reduce number of embeds per page
+    3. Use lazy loading for images
+    4. Check network tab for slow requests
+    5. Consider CDN for static assets
+  </Accordion>
+  
+  <Accordion title="Admin Panel Laggy">
+    **Solutions:**
+    1. Clear browser cache
+    2. Close unused browser tabs
+    3. Check for memory leaks in console
+    4. Reduce number of items per page in lists
+  </Accordion>
+</AccordionGroup>
+
+## Quick Diagnostic Steps
+
+When something isn't working:
+
+<Steps>
+  <Step title="Check Browser Console">
+    Press `F12` → Console tab. Look for red error messages.
+  </Step>
+  <Step title="Check Network Tab">
+    Press `F12` → Network tab. Look for failed requests (red).
+  </Step>
+  <Step title="Verify Environment">
+    Ensure `.env` file exists and has correct values.
+  </Step>
+  <Step title="Check Appwrite Console">
+    Verify collections, buckets, and permissions are set up.
+  </Step>
+  <Step title="Clear Cache">
+    Hard refresh: `Ctrl+Shift+R` (Windows) or `Cmd+Shift+R` (Mac)
+  </Step>
+</Steps>
+
+## Getting Help
+
+If you're still stuck:
+
+1. **Check the specific feature documentation** for detailed setup steps
+2. **Review Appwrite Console** for database/storage issues
+3. **Check Vercel logs** for deployment issues
+4. **Search error messages** online for common solutions
+
+<Note>
+  Most issues are caused by missing environment variables, incorrect permissions, or CORS configuration. Always check these first!
+</Note>

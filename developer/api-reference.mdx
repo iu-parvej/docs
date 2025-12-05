@@ -1,0 +1,380 @@
+---
+title: "API Reference"
+description: "Service functions and Appwrite API usage"
+---
+
+# API Reference
+
+Reference for service functions and Appwrite operations.
+
+## Appwrite Client Setup
+
+```javascript
+import { Client, Databases, Storage, Account, ID, Query } from 'appwrite';
+
+const client = new Client()
+  .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT)
+  .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
+
+export const databases = new Databases(client);
+export const storage = new Storage(client);
+export const account = new Account(client);
+export { ID, Query };
+```
+
+## Database Operations
+
+### List Documents
+
+```javascript
+import { databases, Query } from './appwrite';
+
+// Basic list
+const blogs = await databases.listDocuments(
+  'portfolio_db',
+  'blogs'
+);
+
+// With queries
+const featuredBlogs = await databases.listDocuments(
+  'portfolio_db',
+  'blogs',
+  [
+    Query.equal('featured', true),
+    Query.orderDesc('publishDate'),
+    Query.limit(10)
+  ]
+);
+```
+
+### Get Single Document
+
+```javascript
+const blog = await databases.getDocument(
+  'portfolio_db',
+  'blogs',
+  'document_id'
+);
+```
+
+### Create Document
+
+```javascript
+import { ID } from 'appwrite';
+
+const newBlog = await databases.createDocument(
+  'portfolio_db',
+  'blogs',
+  ID.unique(), // Auto-generate ID
+  {
+    title: 'My Blog Post',
+    category: 'Technology',
+    description: 'A great post...',
+    // ... other fields
+  }
+);
+```
+
+### Update Document
+
+```javascript
+const updated = await databases.updateDocument(
+  'portfolio_db',
+  'blogs',
+  'document_id',
+  {
+    title: 'Updated Title',
+    // Only include fields to update
+  }
+);
+```
+
+### Delete Document
+
+```javascript
+await databases.deleteDocument(
+  'portfolio_db',
+  'blogs',
+  'document_id'
+);
+```
+
+## Query Methods
+
+| Method | Description | Example |
+|--------|-------------|---------|
+| `Query.equal(attr, value)` | Exact match | `Query.equal('category', 'Tech')` |
+| `Query.notEqual(attr, value)` | Not equal | `Query.notEqual('status', 'draft')` |
+| `Query.lessThan(attr, value)` | Less than | `Query.lessThan('price', 100)` |
+| `Query.greaterThan(attr, value)` | Greater than | `Query.greaterThan('likes', 10)` |
+| `Query.search(attr, value)` | Full-text search | `Query.search('title', 'react')` |
+| `Query.orderAsc(attr)` | Sort ascending | `Query.orderAsc('createdAt')` |
+| `Query.orderDesc(attr)` | Sort descending | `Query.orderDesc('publishDate')` |
+| `Query.limit(n)` | Limit results | `Query.limit(10)` |
+| `Query.offset(n)` | Skip results | `Query.offset(20)` |
+| `Query.contains(attr, value)` | Array contains | `Query.contains('tags', 'react')` |
+
+### Complex Queries
+
+```javascript
+// Pagination
+const page2 = await databases.listDocuments(
+  'portfolio_db',
+  'blogs',
+  [
+    Query.orderDesc('publishDate'),
+    Query.limit(10),
+    Query.offset(10) // Skip first 10
+  ]
+);
+
+// Multiple conditions
+const filtered = await databases.listDocuments(
+  'portfolio_db',
+  'products',
+  [
+    Query.equal('category', 'Electronics'),
+    Query.equal('onSale', true),
+    Query.lessThan('price', 500),
+    Query.orderAsc('price')
+  ]
+);
+```
+
+## Storage Operations
+
+### Upload File
+
+```javascript
+import { storage, ID } from './appwrite';
+
+const file = await storage.createFile(
+  'blog_images',      // Bucket ID
+  ID.unique(),        // File ID
+  document.getElementById('fileInput').files[0]
+);
+
+// Get file URL
+const fileUrl = storage.getFileView('blog_images', file.$id);
+```
+
+### Get File URL
+
+```javascript
+// View URL (for images)
+const viewUrl = storage.getFileView('bucket_id', 'file_id');
+
+// Download URL
+const downloadUrl = storage.getFileDownload('bucket_id', 'file_id');
+
+// Preview URL (with transformations)
+const previewUrl = storage.getFilePreview(
+  'bucket_id',
+  'file_id',
+  400,  // width
+  300,  // height
+  'center', // gravity
+  90    // quality
+);
+```
+
+### Delete File
+
+```javascript
+await storage.deleteFile('bucket_id', 'file_id');
+```
+
+## Authentication
+
+### Login
+
+```javascript
+import { account } from './appwrite';
+
+const session = await account.createEmailPasswordSession(
+  'user@example.com',
+  'password'
+);
+```
+
+### Get Current User
+
+```javascript
+try {
+  const user = await account.get();
+  console.log('Logged in as:', user.email);
+} catch (error) {
+  console.log('Not logged in');
+}
+```
+
+### Logout
+
+```javascript
+await account.deleteSession('current');
+```
+
+### Create Account
+
+```javascript
+const user = await account.create(
+  ID.unique(),
+  'user@example.com',
+  'password',
+  'User Name' // Optional
+);
+```
+
+## Service Examples
+
+### Blog Service
+
+```javascript
+// src/lib/blogService.js
+export const blogService = {
+  async listAll() {
+    return await databases.listDocuments(
+      DATABASE_ID,
+      'blogs',
+      [Query.orderDesc('publishDate')]
+    );
+  },
+
+  async listFeatured() {
+    return await databases.listDocuments(
+      DATABASE_ID,
+      'blogs',
+      [
+        Query.equal('featured', true),
+        Query.orderDesc('publishDate'),
+        Query.limit(6)
+      ]
+    );
+  },
+
+  async getBySlug(slug) {
+    const result = await databases.listDocuments(
+      DATABASE_ID,
+      'blogs',
+      [Query.equal('customSlug', slug)]
+    );
+    return result.documents[0] || null;
+  },
+
+  async listByCategory(category) {
+    return await databases.listDocuments(
+      DATABASE_ID,
+      'blogs',
+      [
+        Query.equal('category', category),
+        Query.orderDesc('publishDate')
+      ]
+    );
+  }
+};
+```
+
+### Shortlink Service
+
+```javascript
+// src/lib/shortlinkService.js
+export const shortlinkService = {
+  async getByPath(path) {
+    const result = await databases.listDocuments(
+      DATABASE_ID,
+      'shortlinks',
+      [
+        Query.equal('customPath', path.toLowerCase()),
+        Query.equal('isActive', true)
+      ]
+    );
+    return result.documents[0] || null;
+  },
+
+  async incrementClicks(id, currentCount) {
+    return await databases.updateDocument(
+      DATABASE_ID,
+      'shortlinks',
+      id,
+      { clickCount: currentCount + 1 }
+    );
+  },
+
+  async recordAnalytics(shortlinkId, data) {
+    return await databases.createDocument(
+      DATABASE_ID,
+      'shortlink_analytics',
+      ID.unique(),
+      {
+        shortlinkId,
+        timestamp: new Date().toISOString(),
+        ...data
+      }
+    );
+  }
+};
+```
+
+### Image Upload Helper
+
+```javascript
+// src/lib/imageService.js
+export const imageService = {
+  async upload(bucketId, file) {
+    const uploaded = await storage.createFile(
+      bucketId,
+      ID.unique(),
+      file
+    );
+    
+    const url = storage.getFileView(bucketId, uploaded.$id);
+    
+    return {
+      id: uploaded.$id,
+      url: url.href
+    };
+  },
+
+  async delete(bucketId, fileId) {
+    await storage.deleteFile(bucketId, fileId);
+  },
+
+  getPreviewUrl(bucketId, fileId, width = 400, height = 300) {
+    return storage.getFilePreview(
+      bucketId,
+      fileId,
+      width,
+      height
+    ).href;
+  }
+};
+```
+
+## Error Handling
+
+```javascript
+try {
+  const result = await databases.listDocuments(...);
+} catch (error) {
+  if (error.code === 404) {
+    console.log('Collection not found');
+  } else if (error.code === 401) {
+    console.log('Not authorized');
+  } else if (error.code === 403) {
+    console.log('Permission denied');
+  } else {
+    console.log('Error:', error.message);
+  }
+}
+```
+
+## Common Error Codes
+
+| Code | Meaning | Solution |
+|------|---------|----------|
+| 401 | Unauthorized | Check authentication |
+| 403 | Forbidden | Check permissions |
+| 404 | Not Found | Check collection/document ID |
+| 409 | Conflict | Duplicate unique value |
+| 413 | Payload Too Large | Reduce file/data size |
+| 429 | Rate Limited | Slow down requests |

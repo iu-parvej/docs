@@ -5,35 +5,72 @@ description: "Get your portfolio website running in 10 minutes"
 
 # Quick Start Guide
 
+Get your portfolio website up and running quickly with this step-by-step guide.
+
 ## Prerequisites
 
-- Node.js 18+ installed
-- Appwrite account ([cloud.appwrite.io](https://cloud.appwrite.io))
-- Git installed
+Before starting, make sure you have:
+
+| Requirement | Version | Check Command |
+|-------------|---------|---------------|
+| Node.js | 18+ | `node --version` |
+| npm | 9+ | `npm --version` |
+| Git | Any | `git --version` |
+
+You'll also need an [Appwrite Cloud](https://cloud.appwrite.io) account (free).
 
 ## Installation
 
 <Steps>
-  <Step title="Clone & Install">
+  <Step title="Clone the Repository">
     ```bash
     git clone <your-repo-url>
     cd portfolio
+    ```
+  </Step>
+  
+  <Step title="Install Dependencies">
+    ```bash
     npm install
     ```
+    
+    This installs all required packages including React, Vite, Tailwind, and Appwrite SDK.
+  </Step>
+  
+  <Step title="Create Appwrite Project">
+    1. Go to [cloud.appwrite.io](https://cloud.appwrite.io)
+    2. Click **Create Project**
+    3. Name it (e.g., "Portfolio")
+    4. Copy your **Project ID**
   </Step>
   
   <Step title="Configure Environment">
     Create a `.env` file in the root directory:
     
     ```env
+    # Appwrite Configuration
     VITE_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
-    VITE_APPWRITE_PROJECT_ID=your_project_id
+    VITE_APPWRITE_PROJECT_ID=your_project_id_here
     VITE_APPWRITE_DATABASE_ID=portfolio_db
     VITE_APPWRITE_STORAGE_ID=reactbucket
+    
+    # Optional: PayPal (for shop)
+    VITE_PAYPAL_CLIENT_ID=your_paypal_client_id
     ```
     
+    <Warning>
+      Never commit `.env` to version control. It's already in `.gitignore`.
+    </Warning>
+  </Step>
+  
+  <Step title="Add Platform in Appwrite">
+    1. In Appwrite Console, go to **Settings** → **Platforms**
+    2. Click **Add Platform** → **Web**
+    3. Enter hostname: `localhost`
+    4. Click **Create**
+    
     <Note>
-      Get these values from your Appwrite Console after creating a project.
+      This allows your local development server to communicate with Appwrite.
     </Note>
   </Step>
   
@@ -43,47 +80,133 @@ description: "Get your portfolio website running in 10 minutes"
     ```
     
     Open [http://localhost:5173](http://localhost:5173) in your browser.
+    
+    You should see the portfolio homepage (with placeholder content until you set up the database).
   </Step>
 </Steps>
 
-## First-Time Setup
+## Database Setup
 
-### 1. Create Admin Account
+Your site needs database collections to store content. You have two options:
 
-1. Go to `/admin` in your browser
-2. Sign up with your email
-3. Verify your email in Appwrite Console
+### Option A: Quick Setup (Recommended for Testing)
 
-### 2. Set Up Database
+Create the minimum required collections:
 
-Follow the [Appwrite Setup Guide](/appwrite/overview) to create:
-- Required collections (blogs, projects, products, etc.)
-- Storage buckets for images
-- Proper permissions
+1. Go to Appwrite Console → **Databases**
+2. Click **Create Database** → ID: `portfolio_db`
+3. Create these collections with basic attributes:
 
-### 3. Add Your First Content
+| Collection | Required Attributes |
+|------------|---------------------|
+| `header_section` | `name` (string), `roles` (string[]), `description` (string) |
+| `menubar_settings` | `showBlog` (boolean), `showProjects` (boolean) |
 
-| Section | Admin URL | What to Add |
-|---------|-----------|-------------|
-| Header | `/admin/header` | Name, roles, description |
-| About | `/admin/about` | Bio, skills, experience |
-| Projects | `/admin/projects` | Portfolio projects |
-| Blog | `/admin/blogs` | Blog posts |
+See [Database Setup](/appwrite/database-setup) for complete schema.
+
+### Option B: Full Setup
+
+Follow the complete [Appwrite Setup Guide](/appwrite/overview) to create all collections and storage buckets.
+
+## First-Time Admin Setup
+
+<Steps>
+  <Step title="Access Admin Panel">
+    Go to [http://localhost:5173/admin](http://localhost:5173/admin)
+  </Step>
+  
+  <Step title="Create Account">
+    Click **Sign Up** and create an account with your email.
+  </Step>
+  
+  <Step title="Verify Email (Optional)">
+    If email verification is enabled in Appwrite, check your inbox and verify.
+  </Step>
+  
+  <Step title="Add Content">
+    Start adding your content:
+    
+    | Section | What to Add |
+    |---------|-------------|
+    | Header | Your name, job titles, intro |
+    | About | Bio, skills, profile image |
+    | Projects | Your portfolio work |
+    | Blog | Articles and posts |
+  </Step>
+</Steps>
+
+## Quick Content Checklist
+
+After setup, add content in this order:
+
+<Steps>
+  <Step title="Header Section">
+    `/admin/header` - Your name, rotating roles, description
+  </Step>
+  <Step title="About Section">
+    `/admin/about` - Bio, skills, profile image
+  </Step>
+  <Step title="Project Categories">
+    `/admin/project-categories` - Create 2-3 categories
+  </Step>
+  <Step title="First Project">
+    `/admin/projects` - Add your best project
+  </Step>
+  <Step title="Blog Category">
+    `/admin/blog-categories` - Create a category
+  </Step>
+  <Step title="First Blog Post">
+    `/admin/blogs` - Write your first post
+  </Step>
+</Steps>
 
 ## Build for Production
 
 ```bash
+# Build optimized production bundle
 npm run build
-npm run preview  # Test production build locally
+
+# Preview production build locally
+npm run preview
 ```
+
+The build output is in the `dist/` folder, ready for deployment.
+
+## Common Issues
+
+<AccordionGroup>
+  <Accordion title="Site shows empty/no data">
+    - Check `.env` file exists with correct values
+    - Verify Appwrite project ID is correct
+    - Ensure `localhost` is added to Appwrite platforms
+  </Accordion>
+  
+  <Accordion title="CORS error in console">
+    Add `localhost` to Appwrite Console → Settings → Platforms
+  </Accordion>
+  
+  <Accordion title="npm install fails">
+    - Delete `node_modules` and `package-lock.json`
+    - Run `npm install` again
+    - Ensure Node.js 18+ is installed
+  </Accordion>
+</AccordionGroup>
+
+See [Troubleshooting](/troubleshooting) for more solutions.
 
 ## Next Steps
 
 <CardGroup cols={2}>
-  <Card title="Appwrite Setup" icon="database" href="/appwrite/overview">
-    Complete database and storage configuration
+  <Card title="Complete Appwrite Setup" icon="database" href="/appwrite/overview">
+    Set up all collections and storage buckets
   </Card>
-  <Card title="Deployment" icon="rocket" href="/deployment">
-    Deploy to Vercel or other platforms
+  <Card title="Deploy to Vercel" icon="rocket" href="/deployment">
+    Make your portfolio live
+  </Card>
+  <Card title="Customize Theme" icon="palette" href="/developer/customization">
+    Change colors, fonts, and styles
+  </Card>
+  <Card title="Explore Features" icon="sparkles" href="/features/blog-system">
+    Learn about all available features
   </Card>
 </CardGroup>

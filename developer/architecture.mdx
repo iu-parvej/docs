@@ -1,0 +1,310 @@
+---
+title: "Architecture"
+description: "Technical architecture and project structure overview"
+---
+
+# Project Architecture
+
+Understanding the technical structure of the portfolio website.
+
+## Tech Stack
+
+| Layer | Technology | Purpose |
+|-------|------------|---------|
+| Frontend | React 18 | UI components and state management |
+| Build Tool | Vite 5 | Fast development and optimized builds |
+| Styling | Tailwind CSS 3 | Utility-first CSS framework |
+| Backend | Appwrite | Database, storage, authentication |
+| Icons | Lucide React | Consistent icon library |
+| Deployment | Vercel | Hosting and CI/CD |
+
+## Project Structure
+
+```
+portfolio/
+├── public/                 # Static assets
+├── src/
+│   ├── components/         # Reusable UI components
+│   │   ├── Header/
+│   │   ├── Footer/
+│   │   ├── FontSelector/
+│   │   ├── RichTextEditor/
+│   │   ├── PhotoGrid/
+│   │   └── ...
+│   ├── pages/
+│   │   ├── Admin/          # Admin dashboard pages
+│   │   │   ├── BlogManagement/
+│   │   │   ├── ProjectManagement/
+│   │   │   ├── ShortlinkManagement/
+│   │   │   ├── ShopManagement/
+│   │   │   └── Settings/
+│   │   ├── HomePage.jsx
+│   │   ├── BlogPage.jsx
+│   │   ├── ProjectPage.jsx
+│   │   ├── ShopPage.jsx
+│   │   └── ...
+│   ├── lib/                # Services and utilities
+│   │   ├── appwrite.js     # Appwrite client config
+│   │   ├── shortlinkService.js
+│   │   ├── analyticsService.js
+│   │   └── ...
+│   ├── utils/              # Helper functions
+│   │   ├── googleFonts.js
+│   │   ├── fontLoader.js
+│   │   └── ...
+│   ├── context/            # React context providers
+│   │   ├── AuthContext.jsx
+│   │   ├── CartContext.jsx
+│   │   └── ...
+│   ├── App.jsx             # Main app component
+│   ├── main.jsx            # Entry point
+│   └── index.css           # Global styles
+├── docs/                   # Documentation (separate repo)
+├── .env                    # Environment variables
+├── vite.config.js          # Vite configuration
+├── tailwind.config.js      # Tailwind configuration
+└── package.json
+```
+
+## Data Flow
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Browser   │────▶│   React     │────▶│  Appwrite   │
+│   (User)    │◀────│   App       │◀────│  Backend    │
+└─────────────┘     └─────────────┘     └─────────────┘
+                           │
+                    ┌──────┴──────┐
+                    │             │
+              ┌─────▼─────┐ ┌─────▼─────┐
+              │ Components│ │  Context  │
+              │   (UI)    │ │  (State)  │
+              └───────────┘ └───────────┘
+```
+
+## Key Components
+
+### Appwrite Client (`src/lib/appwrite.js`)
+
+Central configuration for Appwrite SDK:
+
+```javascript
+import { Client, Databases, Storage, Account } from 'appwrite';
+
+const client = new Client()
+  .setEndpoint(import.meta.env.VITE_APPWRITE_ENDPOINT)
+  .setProject(import.meta.env.VITE_APPWRITE_PROJECT_ID);
+
+export const databases = new Databases(client);
+export const storage = new Storage(client);
+export const account = new Account(client);
+```
+
+### Database Service Pattern
+
+Each feature has a dedicated service file:
+
+```javascript
+// src/lib/blogService.js
+import { databases, ID, Query } from './appwrite';
+
+const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
+const COLLECTION_ID = 'blogs';
+
+export const blogService = {
+  async list(queries = []) {
+    return await databases.listDocuments(
+      DATABASE_ID,
+      COLLECTION_ID,
+      queries
+    );
+  },
+  
+  async get(id) {
+    return await databases.getDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      id
+    );
+  },
+  
+  async create(data) {
+    return await databases.createDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      ID.unique(),
+      data
+    );
+  },
+  
+  async update(id, data) {
+    return await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      id,
+      data
+    );
+  },
+  
+  async delete(id) {
+    return await databases.deleteDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      id
+    );
+  }
+};
+```
+
+### Context Providers
+
+Global state management using React Context:
+
+```javascript
+// src/context/AuthContext.jsx
+import { createContext, useContext, useState, useEffect } from 'react';
+import { account } from '../lib/appwrite';
+
+const AuthContext = createContext();
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  async function checkUser() {
+    try {
+      const session = await account.get();
+      setUser(session);
+    } catch {
+      setUser(null);
+    }
+    setLoading(false);
+  }
+
+  return (
+    <AuthContext.Provider value={{ user, loading, checkUser }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export const useAuth = () => useContext(AuthContext);
+```
+
+## Routing Structure
+
+```javascript
+// src/App.jsx
+<Routes>
+  {/* Public Routes */}
+  <Route path="/" element={<HomePage />} />
+  <Route path="/blogs" element={<BlogsPage />} />
+  <Route path="/blog/:slug" element={<BlogPage />} />
+  <Route path="/projects" element={<ProjectsPage />} />
+  <Route path="/project/:slug" element={<ProjectPage />} />
+  <Route path="/shop" element={<ShopPage />} />
+  
+  {/* Shortlink Redirect */}
+  <Route path="/:path" element={<ShortlinkRedirect />} />
+  
+  {/* Admin Routes (Protected) */}
+  <Route path="/admin" element={<AdminLayout />}>
+    <Route index element={<Dashboard />} />
+    <Route path="blogs" element={<BlogManagement />} />
+    <Route path="projects" element={<ProjectManagement />} />
+    <Route path="shortlinks" element={<ShortlinkManagement />} />
+    {/* ... more admin routes */}
+  </Route>
+</Routes>
+```
+
+## State Management
+
+| State Type | Solution | Use Case |
+|------------|----------|----------|
+| Server State | Direct Appwrite calls | Database operations |
+| Auth State | AuthContext | User session |
+| Cart State | CartContext + localStorage | Shopping cart |
+| UI State | useState/useReducer | Component-level state |
+
+## Performance Optimizations
+
+### Code Splitting
+
+```javascript
+// Lazy load admin pages
+const BlogManagement = lazy(() => import('./pages/Admin/BlogManagement'));
+const ProjectManagement = lazy(() => import('./pages/Admin/ProjectManagement'));
+```
+
+### Image Optimization
+
+- Lazy loading for images below the fold
+- WebP format support
+- Responsive image sizes
+
+### Font Loading
+
+```javascript
+// Dynamic Google Font loading
+const loadGoogleFont = (fontFamily) => {
+  const link = document.createElement('link');
+  link.href = `https://fonts.googleapis.com/css2?family=${fontFamily}&display=swap`;
+  link.rel = 'stylesheet';
+  document.head.appendChild(link);
+};
+```
+
+## Security Considerations
+
+| Concern | Solution |
+|---------|----------|
+| Authentication | Appwrite session management |
+| Authorization | Collection-level permissions |
+| XSS Prevention | DOMPurify for rich text |
+| CORS | Appwrite platform configuration |
+| Secrets | Environment variables (never in code) |
+
+## Build Configuration
+
+### Vite Config (`vite.config.js`)
+
+```javascript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          appwrite: ['appwrite'],
+        }
+      }
+    }
+  }
+});
+```
+
+### Tailwind Config (`tailwind.config.js`)
+
+```javascript
+export default {
+  content: ['./index.html', './src/**/*.{js,jsx}'],
+  theme: {
+    extend: {
+      colors: {
+        primary: '#1E8479',
+        secondary: '#105652',
+      }
+    }
+  },
+  plugins: []
+};
+```

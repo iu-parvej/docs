@@ -1,0 +1,389 @@
+---
+title: "Customization"
+description: "How to customize and extend the portfolio website"
+---
+
+# Customization Guide
+
+Learn how to customize colors, fonts, components, and add new features.
+
+## Theme Customization
+
+### Colors
+
+Edit `tailwind.config.js` to change the color scheme:
+
+```javascript
+// tailwind.config.js
+export default {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#1E8479',
+          light: '#07C983',
+          dark: '#105652',
+        },
+        secondary: '#F59E0B',
+        accent: '#8B5CF6',
+      }
+    }
+  }
+};
+```
+
+### Using Custom Colors
+
+```jsx
+// In components
+<button className="bg-primary hover:bg-primary-dark text-white">
+  Click Me
+</button>
+
+<div className="text-primary-light border-primary">
+  Content
+</div>
+```
+
+### CSS Variables
+
+For dynamic theming, use CSS variables in `src/index.css`:
+
+```css
+:root {
+  --color-primary: #1E8479;
+  --color-primary-light: #07C983;
+  --color-primary-dark: #105652;
+  --color-background: #ffffff;
+  --color-text: #1f2937;
+}
+
+/* Dark mode */
+.dark {
+  --color-background: #1f2937;
+  --color-text: #f9fafb;
+}
+```
+
+## Adding New Pages
+
+### Public Page
+
+<Steps>
+  <Step title="Create Component">
+    Create `src/pages/NewPage.jsx`:
+    
+    ```jsx
+    export default function NewPage() {
+      return (
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-3xl font-bold">New Page</h1>
+          {/* Your content */}
+        </div>
+      );
+    }
+    ```
+  </Step>
+  
+  <Step title="Add Route">
+    In `src/App.jsx`:
+    
+    ```jsx
+    import NewPage from './pages/NewPage';
+    
+    // In Routes
+    <Route path="/new-page" element={<NewPage />} />
+    ```
+  </Step>
+  
+  <Step title="Add to Navigation">
+    Update menu settings in admin or edit `Header.jsx`
+  </Step>
+</Steps>
+
+### Admin Page
+
+<Steps>
+  <Step title="Create Component">
+    Create `src/pages/Admin/NewFeature/NewFeature.jsx`:
+    
+    ```jsx
+    export default function NewFeature() {
+      return (
+        <div className="p-6">
+          <h1 className="text-2xl font-bold mb-6">New Feature</h1>
+          {/* Admin content */}
+        </div>
+      );
+    }
+    ```
+  </Step>
+  
+  <Step title="Add Route">
+    In `src/App.jsx` under admin routes:
+    
+    ```jsx
+    <Route path="new-feature" element={<NewFeature />} />
+    ```
+  </Step>
+  
+  <Step title="Add to Sidebar">
+    Edit `src/pages/Admin/AdminLayout.jsx` to add menu item
+  </Step>
+</Steps>
+
+## Adding New Collections
+
+### 1. Create in Appwrite
+
+1. Go to Appwrite Console → Databases → portfolio_db
+2. Create new collection with attributes
+3. Set permissions
+
+### 2. Create Service
+
+```javascript
+// src/lib/newFeatureService.js
+import { databases, ID, Query } from './appwrite';
+
+const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
+const COLLECTION_ID = 'new_collection';
+
+export const newFeatureService = {
+  async list() {
+    return await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
+  },
+  
+  async get(id) {
+    return await databases.getDocument(DATABASE_ID, COLLECTION_ID, id);
+  },
+  
+  async create(data) {
+    return await databases.createDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      ID.unique(),
+      data
+    );
+  },
+  
+  async update(id, data) {
+    return await databases.updateDocument(
+      DATABASE_ID,
+      COLLECTION_ID,
+      id,
+      data
+    );
+  },
+  
+  async delete(id) {
+    return await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, id);
+  }
+};
+```
+
+### 3. Create Admin UI
+
+Use existing admin pages as templates. Key patterns:
+
+```jsx
+// List view with CRUD
+const [items, setItems] = useState([]);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  loadItems();
+}, []);
+
+async function loadItems() {
+  setLoading(true);
+  const result = await newFeatureService.list();
+  setItems(result.documents);
+  setLoading(false);
+}
+
+async function handleDelete(id) {
+  if (confirm('Delete this item?')) {
+    await newFeatureService.delete(id);
+    loadItems();
+  }
+}
+```
+
+## Adding Font Selector to New Pages
+
+```jsx
+import FontSelector from '../../../components/FontSelector/FontSelector';
+
+const [titleFont, setTitleFont] = useState("'Open Sans', sans-serif");
+
+// In your form
+<FontSelector
+  value={titleFont}
+  onChange={setTitleFont}
+  label="Title Font"
+  previewText="Preview Text Here"
+/>
+```
+
+## Customizing Rich Text Editor
+
+### Add New Toolbar Button
+
+Edit `src/components/RichTextEditor/RichTextEditor.jsx`:
+
+```jsx
+// Add to toolbar
+<button
+  onClick={() => handleCustomAction()}
+  className="p-2 hover:bg-gray-100 rounded"
+  title="Custom Action"
+>
+  <CustomIcon className="w-4 h-4" />
+</button>
+
+// Handler function
+const handleCustomAction = () => {
+  document.execCommand('customCommand', false, 'value');
+  // Or manipulate selection directly
+};
+```
+
+### Add New Embed Type
+
+```jsx
+// In embed handler
+const supportedEmbeds = {
+  youtube: /youtube\.com|youtu\.be/,
+  vimeo: /vimeo\.com/,
+  // Add new type
+  spotify: /spotify\.com/,
+};
+```
+
+## Custom Components
+
+### Reusable Card Component
+
+```jsx
+// src/components/Card/Card.jsx
+export default function Card({ 
+  title, 
+  description, 
+  image, 
+  onClick,
+  className = '' 
+}) {
+  return (
+    <div 
+      className={`bg-white rounded-lg shadow-md overflow-hidden 
+                  hover:shadow-lg transition-shadow cursor-pointer ${className}`}
+      onClick={onClick}
+    >
+      {image && (
+        <img src={image} alt={title} className="w-full h-48 object-cover" />
+      )}
+      <div className="p-4">
+        <h3 className="font-bold text-lg mb-2">{title}</h3>
+        <p className="text-gray-600 text-sm">{description}</p>
+      </div>
+    </div>
+  );
+}
+```
+
+### Loading Spinner
+
+```jsx
+// src/components/Spinner/Spinner.jsx
+export default function Spinner({ size = 'md' }) {
+  const sizes = {
+    sm: 'w-4 h-4',
+    md: 'w-8 h-8',
+    lg: 'w-12 h-12'
+  };
+  
+  return (
+    <div className={`${sizes[size]} animate-spin rounded-full 
+                     border-2 border-gray-300 border-t-primary`} />
+  );
+}
+```
+
+## Environment-Specific Config
+
+```javascript
+// src/config.js
+const config = {
+  development: {
+    apiUrl: 'http://localhost:5173',
+    debug: true,
+  },
+  production: {
+    apiUrl: 'https://yourdomain.com',
+    debug: false,
+  }
+};
+
+export default config[import.meta.env.MODE] || config.development;
+```
+
+## Adding Analytics
+
+### Google Analytics
+
+```html
+<!-- index.html -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_ID"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GA_ID');
+</script>
+```
+
+### Track Page Views
+
+```jsx
+// src/App.jsx
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+function App() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    // Track page view
+    if (window.gtag) {
+      window.gtag('event', 'page_view', {
+        page_path: location.pathname,
+      });
+    }
+  }, [location]);
+  
+  // ...
+}
+```
+
+## Best Practices
+
+<Tip>
+  Keep components small and focused. If a component exceeds 200 lines, consider splitting it.
+</Tip>
+
+<Tip>
+  Use TypeScript for better type safety and IDE support in larger projects.
+</Tip>
+
+<Tip>
+  Create a `constants.js` file for magic strings and configuration values.
+</Tip>
+
+<Warning>
+  Never hardcode API keys or secrets. Always use environment variables.
+</Warning>
+
+<Warning>
+  Test thoroughly after customizations, especially database schema changes.
+</Warning>
